@@ -1,0 +1,16 @@
+[
+    {
+      "position": 1,
+      "team": {
+        "id": 57,
+        "name": "Arsenal",
+        "crest": "https://example.com/arsenal.png"
+      },
+      "playedGames": 28,
+      "won": 20,
+      "draw": 5,
+      "lost": 3,
+      "goalDifference": 35,
+      "points": 65
+    }
+  ]

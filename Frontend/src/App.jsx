@@ -14,6 +14,7 @@ import ProfilePage from "./components/ProfilePage";
 import Posts from "./pages/Posts/Posts"
 import TeamPage from "./pages/TeamPage/TeamPage";
 import TeamDetails from "./pages/TeamDetails/TeamDetails";
+
 function App() {
   return (
     <AuthProvider>
@@ -34,8 +35,6 @@ function App() {
         <Route path="/match-details/:fixtureId" element={<MatchDetails />} />
         <Route path="/team/:teamId" element={<TeamDetails />} />
         <Route path="/teams" element={<TeamPage />} />
-
-
       </Routes>
     </Router>
     </AuthProvider>

@@ -17,13 +17,9 @@ const port = process.env.PORT || 5000;
 app.use(cors({ origin: "http://localhost:5173" })); // Allow requests from frontend
 app.use(express.json()); // Parse JSON request bodies
 
-// MySQL Database Connection
-const db = mysql.createConnection({
-  host: process.env.DB_HOST || "localhost",
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "1311",
-  database: process.env.DB_NAME || "sportify_db",
-});
+
+// With this block:
+const db = mysql.createConnection(process.env.DATABASE_URL);
 
 db.connect((err) => {
   if (err) {
@@ -37,27 +33,44 @@ app.post("/api/signup", async (req, res) => {
   const { username, email, password, profile_picture, is_admin } = req.body;
 
   if (!username || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+    return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
-      // Hash password
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Insert user into database
-      const sql =
-          "INSERT INTO users (username, email, password_hash, profile_picture, is_admin) VALUES (?, ?, ?, ?, ?)";
-      db.query(sql, [username, email, hashedPassword, profile_picture || null, is_admin || 0], (err, result) => {
-          if (err) {
-              console.error("❌ Error inserting user:", err);
-              return res.status(500).json({ message: "Signup failed" });
-          }
-          res.status(201).json({ message: "✅ User registered successfully" });
+    // 🔍 Check if user already exists using async/await
+    const userExists = await new Promise((resolve, reject) => {
+      const checkSql = "SELECT * FROM users WHERE email = ?";
+      db.query(checkSql, [email], (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(results.length > 0);
       });
+    });
+
+    if (userExists) {
+      return res.status(409).json({ message: "User already exists" });
+    }
+
+    // ✅ Proceed to insert user
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const insertSql = "INSERT INTO users (username, email, password_hash, profile_picture, is_admin) VALUES (?, ?, ?, ?, ?)";
+
+    await new Promise((resolve, reject) => {
+      db.query(insertSql, [username, email, hashedPassword, profile_picture || null, is_admin || 0], (err, result) => {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+
+    return res.status(201).json({ message: "✅ User registered successfully" });
+
   } catch (error) {
-      res.status(500).json({ message: "❌ Error processing signup", error });
+    console.error("❌ Signup error:", error);
+    return res.status(500).json({ message: "Signup failed", error: error.message });
   }
 });
+
 
 // 🔹 LOGIN API
 app.post("/api/login", async (req, res) => {
