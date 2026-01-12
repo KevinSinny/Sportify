@@ -105,23 +105,26 @@ const LeagueStandings = () => {
 
   return (
     <div className="standings-container">
-      {/* Table Wrapper (Scrollable Container) */}
       <div className="table-wrapper">
         {/* League Buttons */}
         <LeagueButtons onSelectLeague={fetchStandings} />
-
+  
         {/* League Header */}
         <LeagueHeader selectedLeague={selectedLeague} />
-
-        {/* Loading/Error Messages */}
+  
+        {/* Loading/Error/Empty Messages */}
         {loading && <p>Loading standings...</p>}
         {error && <p style={{ color: "red" }}>{error}</p>}
-
+        {!loading && standings && standings.length === 0 && (
+          <p>No standings available</p>
+        )}
+  
         {/* Standings Table */}
         <StandingsTable standings={standings} />
       </div>
     </div>
   );
+  
 };
 
 export default LeagueStandings;

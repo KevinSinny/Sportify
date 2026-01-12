@@ -1,0 +1,20 @@
+[
+    {
+      "player_name": "Mathijs de Ligt",
+      "to_team": "Bayern Munich",
+      "from_team": "Juventus",
+      "age": 22,
+      "position": "Centre-Back",
+      "fee": "€67.00m",
+      "league_name": "Bundesliga"
+    },
+    {
+      "player_name": "Sadio Mané",
+      "to_team": "Bayern Munich",
+      "from_team": "Liverpool",
+      "age": 30,
+      "position": "Left Winger",
+      "fee": "€20.00m",
+      "league_name": "Bundesliga"
+    }
+  ]
